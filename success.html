@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تایید اصالت کالا</title>
     <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         body {
             font-family: 'B Nazanin', 'Vazirmatn', sans-serif;
             display: flex;
@@ -19,54 +24,70 @@
             position: relative;
         }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .envelope, .message, .confetti {
-            width: 80%;
-            max-width: 400px;
-            cursor: pointer;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        #closed-envelope {
-            cursor: pointer;
-        }
-
-        #open-envelope {
-            display: none;
-        }
-        
-        #message-image {
-            display: none;
-            cursor: default;
+        .full-screen-image {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; /* برای قرار گرفتن در پس زمینه */
         }
         
         .confetti {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
             pointer-events: none;
+            z-index: 2; /* برای نمایش روی پس زمینه */
         }
         
         .confetti.visible {
-            opacity: 1;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .content {
+            position: relative;
+            z-index: 3; /* برای قرار گرفتن روی انیمیشن و پس زمینه */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+        }
+        
+        #closed-envelope {
+            width: 80%;
+            max-width: 400px;
+            cursor: pointer;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #message-container {
+            position: relative;
+            display: none;
+            width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* سایه سه بعدی */
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        #message-image {
+            width: 100%;
+            height: auto;
         }
         
         .button-link {
-            display: none; /*Initially hidden*/
+            display: none;
             margin-top: 30px;
             text-decoration: none;
         }
@@ -92,12 +113,10 @@
 </head>
 <body>
 
-    <div class="container">
-        <img id="closed-envelope" src="klikon.png" alt="پاکت نامه بسته">
+    <img id="closed-envelope" src="klikon.png" alt="پاکت نامه بسته">
 
-        <img id="open-envelope" src="payam.png" alt="پاکت نامه باز با متن" class="message">
-
-        <img id="message-image" src="payam.png" alt="متن تایید اصالت کالا" class="message">
+    <div id="message-container">
+        <img id="message-image" src="payam.png" alt="متن تایید اصالت کالا">
     </div>
 
     <img id="confetti-1" src="1.gif" alt="کاغذ رنگی" class="confetti">
@@ -111,8 +130,8 @@
 
     <script>
         const closedEnvelope = document.getElementById('closed-envelope');
-        const messageImage = document.getElementById('message-image');
-        const buttonLink = document.getElementById('back-button-link');
+        const messageContainer = document.getElementById('message-container');
+        const backButtonLink = document.getElementById('back-button-link');
         const confettiGifs = [
             document.getElementById('confetti-1'),
             document.getElementById('confetti-2'),
@@ -121,25 +140,32 @@
         ];
 
         closedEnvelope.addEventListener('click', () => {
-            // مخفی کردن پاکت نامه بسته و نمایش متن و دکمه
+            // مخفی کردن پاکت نامه بسته
             closedEnvelope.style.display = 'none';
-            messageImage.style.display = 'block';
+
+            // نمایش پیام با انیمیشن
+            messageContainer.style.display = 'flex';
             
             // نمایش GIFها به ترتیب و با تأخیر
-            confettiGifs.forEach((gif, index) => {
-                setTimeout(() => {
-                    gif.classList.add('visible');
-                    // مخفی کردن GIF پس از اتمام انیمیشن (بسته به طول GIF)
-                    setTimeout(() => {
-                        gif.classList.remove('visible');
-                    }, 2000); // زمان را بر اساس طول GIF تنظیم کنید
-                }, index * 1000); // هر 1 ثانیه یک GIF جدید
-            });
-
-            // نمایش دکمه پس از اتمام تمام انیمیشن‌ها
             setTimeout(() => {
-                buttonLink.style.display = 'block';
-            }, confettiGifs.length * 1000 + 500); // نمایش دکمه 0.5 ثانیه پس از آخرین GIF
+                confettiGifs[0].classList.add('visible'); // نمایش گیف اول
+                setTimeout(() => {
+                    confettiGifs[0].classList.remove('visible');
+                    confettiGifs[1].classList.add('visible'); // نمایش گیف دوم
+                    setTimeout(() => {
+                        confettiGifs[1].classList.remove('visible');
+                        confettiGifs[2].classList.add('visible'); // نمایش گیف سوم
+                        setTimeout(() => {
+                            confettiGifs[2].classList.remove('visible');
+                            confettiGifs[3].classList.add('visible'); // نمایش گیف چهارم
+                            setTimeout(() => {
+                                confettiGifs[3].classList.remove('visible');
+                                backButtonLink.style.display = 'block'; // نمایش دکمه
+                            }, 1000); // 1 ثانیه پس از گیف آخر
+                        }, 1000); // 1 ثانیه پس از گیف سوم
+                    }, 1000); // 1 ثانیه پس از گیف دوم
+                }, 1000); // 1 ثانیه پس از گیف اول
+            }, 500); // 0.5 ثانیه پس از کلیک
         });
 
     </script>
