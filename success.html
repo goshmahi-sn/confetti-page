@@ -15,8 +15,8 @@
             to { opacity: 0; }
         }
         @keyframes slideInUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+            from { transform: translate(-50%, 100%); }
+            to { transform: translate(-50%, 0); }
         }
 
         /* استایل‌های کلی */
@@ -36,14 +36,15 @@
         
         /* استایل برای تمام تصاویر در صفحه */
         .image {
-            width: 80%;
-            max-width: 400px;
+            max-width: 90%;
+            max-height: 90vh;
             cursor: pointer;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             transition: all 0.5s ease-in-out;
+            object-fit: contain; /* برای حفظ نسبت ابعاد */
         }
 
         /* استایل برای گیف‌های تمام صفحه */
@@ -65,7 +66,10 @@
 
         /* استایل برای کانتینر پیام با پس‌زمینه سه بعدی */
         #message-container {
-            position: relative;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: none;
             padding: 20px;
             width: 80%;
@@ -79,6 +83,7 @@
         #message-image {
             width: 100%;
             height: auto;
+            display: block; /* برای حذف فضای خالی زیر تصویر */
         }
         
         .button-link {
