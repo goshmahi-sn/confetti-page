@@ -3,232 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تایید اصالت کالا</title>
+    <title>صفحه تبریک</title>
+    
     <style>
-        @font-face {
-            font-family: 'Vazirmatn';
-            src: url('Vazirmatn-Regular.woff2') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        @keyframes openEnvelope {
-            from { transform: scale(1) rotateY(0deg); opacity: 1; }
-            to { transform: scale(0.8) rotateY(90deg); opacity: 0; }
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 1; }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes oldTvEffect {
-            0% { filter: contrast(1) brightness(1) saturate(1) blur(0px); transform: scale(1); opacity: 1; }
-            50% { filter: contrast(1.5) brightness(0.5) saturate(2) blur(2px); transform: scale(1.1); opacity: 0.5; }
-            100% { filter: contrast(0) brightness(0) saturate(0) blur(5px); transform: scale(0.5); opacity: 0; }
-        }
-        
         body {
-            font-family: 'Vazirmatn', 'B Nazanin', sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            color: #333;
-            text-align: center;
             overflow: hidden;
-            position: relative;
+            font-family: sans-serif;
+            color: white;
+            background-color: #000;
         }
-
-        .container {
-            position: relative;
-            width: 90%;
-            max-width: 600px;
+        
+        /* انیمیشن چرخش سه بعدی برای پس‌زمینه */
+        @keyframes gold-gradient-rotate {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+        
+        .gold-background {
+            background: linear-gradient(-45deg, #FFD700, #FFCC00, #FFEB00, #FFF200);
+            background-size: 400% 400%;
+            animation: gold-gradient-rotate 20s ease infinite;
+        }
+        
+        #container {
+            text-align: center;
+        }
+        
+        img {
+            max-width: 90%;
+            max-height: 80vh;
+            cursor: pointer;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+        
+        /* انیمیشن محو شدن (Fade-out) */
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.8); }
+        }
+        
+        /* انیمیشن وارد شدن (Fade-in) */
+        .image-fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* انیمیشن Bounce (برای تصویر پیام) */
+        .bounce-effect {
+            animation: bounceIn 0.8s forwards;
+        }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        
+        /* استایل دکمه‌ها */
+        #button-container {
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            z-index: 5;
+            gap: 15px;
         }
         
-        #text-klikon {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #4CAF50;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-
-        #text-klikon:hover {
-            transform: scale(1.05);
-        }
-
-        .image-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .clickable-image {
-            width: 80%;
-            max-width: 400px;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-            display: none;
-        }
-
-        #open-envelope {
-            display: none;
-        }
-
-        #message-image-container {
-            display: none;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            background-color: #d1b87b; /* طلایی ملایم */
-            border: 2px solid #a38c64;
-            border-top: 2px solid #ffde94;
-            border-left: 2px solid #ffde94;
-            box-shadow: 
-                inset -1px -1px #a38c64, 
-                inset 1px 1px #ffde94,
-                -3px -3px 10px rgba(0,0,0,0.2),
-                3px 3px 10px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 10;
-        }
-
-        #message-image {
-            width: 100%;
-            height: auto;
-        }
-
-        .confetti {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .confetti.visible {
-            opacity: 1;
-            transition: opacity 1s ease-in-out;
-        }
-        
-        .button-link {
-            display: none;
-            margin-top: 40px;
-            text-decoration: none;
-            position: relative;
-            z-index: 10;
-        }
-
-        .back-button {
-            padding: 15px 40px;
+        button {
+            padding: 15px 30px;
             font-size: 18px;
             font-weight: bold;
-            background-color: #2173ff; /* آبی ویندوز XP */
             color: white;
-            border: 2px solid #144b9b;
-            border-top: 2px solid #6699ff;
-            border-left: 2px solid #6699ff;
-            box-shadow: 
-                inset -1px -1px #144b9b,
-                inset 1px 1px #6699ff;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-            transition: all 0.1s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
         }
         
-        .back-button:active {
+        button:active {
             transform: translateY(2px);
-            border: 2px solid #6699ff;
-            border-top: 2px solid #144b9b;
-            border-left: 2px solid #144b9b;
-            box-shadow: 
-                inset -1px -1px #6699ff,
-                inset 1px 1px #144b9b;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .blue-button {
+            background: linear-gradient(145deg, #007bff, #0056b3);
+            box-shadow: 0 5px #003366;
+        }
+        .blue-button:hover {
+            background: linear-gradient(145deg, #008cff, #0069d9);
+        }
+        .blue-button:active {
+            box-shadow: 0 2px #003366;
+            transform: translateY(3px);
+        }
+        
+        .green-button {
+            background: linear-gradient(145deg, #28a745, #1e7e34);
+            box-shadow: 0 5px #145224;
+        }
+        .green-button:hover {
+            background: linear-gradient(145deg, #2ecc4a, #219d3d);
+        }
+        .green-button:active {
+            box-shadow: 0 2px #145224;
+            transform: translateY(3px);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1 id="text-klikon">پاکت نامه بسته</h1>
-        <div class="image-container">
-            <img id="open-envelope" class="clickable-image" src="pakatebaz.png" alt="پاکت نامه باز">
-        </div>
-
-        <div id="message-image-container">
-            <img id="message-image" src="payam.png" alt="متن تایید اصالت کالا">
+    <div id="container">
+        <img id="klikkon" class="image-fade-in" src="klikkon.png" alt="کلیک کنید">
+        <img id="pakatebaz" class="hidden" src="pakatebaz.png" alt="پاکت باز">
+        <div id="payam-container" class="hidden">
+            <img id="payam" class="bounce-effect" src="payam.png" alt="پیام">
+            <div id="gif-container">
+                <img id="gif1" class="hidden" src="1.gif" alt="گیف 1">
+                <img id="gif2" class="hidden" src="2.gif" alt="گیف 2">
+                <img id="gif3" class="hidden" src="3.gif" alt="گیف 3">
+                <img id="gif4" class="hidden" src="4.gif" alt="گیف 4">
+            </div>
         </div>
     </div>
     
-    <img id="confetti-1" src="1.gif" alt="کاغذ رنگی" class="confetti">
-    <img id="confetti-2" src="2.gif" alt="کاغذ رنگی" class="confetti">
-    <img id="confetti-3" src="3.gif" alt="کاغذ رنگی" class="confetti">
-    <img id="confetti-4" src="4.gif" alt="کاغذ رنگی" class="confetti">
-
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScJzM5F8R9-..." id="back-button-link" class="button-link">
-        <button class="back-button">بازگشت به فرم</button>
-    </a>
+    <div id="button-container" class="hidden">
+        <button id="restart-btn" class="green-button">شروع مجدد</button>
+        <button id="back-to-form-btn" class="blue-button">بازگشت به فرم</button>
+    </div>
 
     <script>
-        const textKlikon = document.getElementById('text-klikon');
-        const openEnvelope = document.getElementById('open-envelope');
-        const messageContainer = document.getElementById('message-image-container');
-        const messageImage = document.getElementById('message-image');
-        const backButtonLink = document.getElementById('back-button-link');
-        const confettiGifs = [
-            document.getElementById('confetti-1'),
-            document.getElementById('confetti-2'),
-            document.getElementById('confetti-3'),
-            document.getElementById('confetti-4')
-        ];
-
-        textKlikon.addEventListener('click', () => {
-            textKlikon.style.animation = 'openEnvelope 0.5s forwards';
-
-            setTimeout(() => {
-                textKlikon.style.display = 'none';
-                openEnvelope.style.display = 'block';
+        document.addEventListener('DOMContentLoaded', () => {
+            const klikkonImg = document.getElementById('klikkon');
+            const pakatebazImg = document.getElementById('pakatebaz');
+            const payamContainer = document.getElementById('payam-container');
+            const payamImg = document.getElementById('payam');
+            const buttonContainer = document.getElementById('button-container');
+            const restartBtn = document.getElementById('restart-btn');
+            const backToFormBtn = document.getElementById('back-to-form-btn');
+            const gifs = [
+                document.getElementById('gif1'),
+                document.getElementById('gif2'),
+                document.getElementById('gif3'),
+                document.getElementById('gif4')
+            ];
+            let gifIndex = 0;
+        
+            // تابع اصلی برای اجرای سناریو
+            function startScenario() {
+                // ابتدا همه عناصر را مخفی می‌کنیم
+                klikkonImg.classList.remove('hidden');
+                pakatebazImg.classList.add('hidden');
+                payamContainer.classList.add('hidden');
+                buttonContainer.classList.add('hidden');
+                document.body.classList.remove('gold-background');
+                gifs.forEach(gif => gif.classList.add('hidden'));
+        
+                // وقتی روی klikkon کلیک شد
+                klikkonImg.addEventListener('click', handleKlikkonClick, { once: true });
+            }
+        
+            function handleKlikkonClick() {
+                // انیمیشن محو شدن klikkon
+                klikkonImg.classList.add('fade-out');
                 
                 setTimeout(() => {
-                    openEnvelope.style.display = 'none';
-                    messageContainer.style.display = 'block';
-                    messageImage.style.animation = 'bounceIn 1s forwards';
-                    confettiGifs.forEach(gif => gif.classList.add('visible'));
+                    klikkonImg.classList.add('hidden');
+                    klikkonImg.classList.remove('fade-out'); // ریست کردن انیمیشن
                     
+                    // نمایش pakatebaz
+                    pakatebazImg.classList.remove('hidden');
+                    pakatebazImg.classList.add('image-fade-in');
+        
                     setTimeout(() => {
-                        messageImage.style.animation = 'oldTvEffect 1s forwards';
-                        confettiGifs.forEach(gif => gif.classList.remove('visible'));
-
+                        // انیمیشن محو شدن pakatebaz
+                        pakatebazImg.classList.add('fade-out');
+                        
                         setTimeout(() => {
-                            messageContainer.style.display = 'none';
-                            backButtonLink.style.display = 'block';
-                        }, 1000); 
-
-                    }, 7000); 
-
-                }, 2000); 
-
-            }, 500);
+                            pakatebazImg.classList.add('hidden');
+                            pakatebazImg.classList.remove('fade-out'); // ریست کردن انیمیشن
+        
+                            // نمایش payam
+                            payamContainer.classList.remove('hidden');
+                            payamImg.classList.add('bounce-effect');
+                            document.body.classList.add('gold-background');
+        
+                            // شروع نمایش گیف‌ها بعد از 40 ثانیه
+                            setTimeout(showGifs, 40000); 
+        
+                        }, 2000); // 2 ثانیه برای محو شدن pakatebaz
+                    }, 2000); // 2 ثانیه برای نمایش pakatebaz
+                }, 2000); // 2 ثانیه برای محو شدن klikkon
+            }
+            
+            function showGifs() {
+                if (gifIndex < gifs.length) {
+                    // مخفی کردن گیف قبلی
+                    if (gifIndex > 0) {
+                        gifs[gifIndex - 1].classList.add('hidden');
+                    }
+                    
+                    // نمایش گیف فعلی
+                    gifs[gifIndex].classList.remove('hidden');
+                    
+                    gifIndex++;
+                    setTimeout(showGifs, 15000); // نمایش هر گیف به مدت 15 ثانیه
+                } else {
+                    // وقتی همه گیف‌ها نمایش داده شدند
+                    // مخفی کردن آخرین گیف
+                    if (gifs.length > 0) {
+                        gifs[gifs.length - 1].classList.add('hidden');
+                    }
+                    
+                    // نمایش دکمه‌ها
+                    buttonContainer.classList.remove('hidden');
+                    
+                    // تنظیم رویداد برای دکمه‌ها
+                    restartBtn.addEventListener('click', () => {
+                        gifIndex = 0; // ریست کردن ایندکس گیف
+                        startScenario();
+                    });
+        
+                    backToFormBtn.addEventListener('click', () => {
+                        // اینجا URL صفحه فرم قبلی را قرار دهید
+                        window.location.href = 'URL_Form_Page'; 
+                    });
+                }
+            }
+        
+            // شروع سناریو برای اولین بار
+            startScenario();
         });
-
     </script>
 </body>
 </html>
