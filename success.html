@@ -5,35 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تایید اصالت کالا</title>
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('Vazirmatn-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
         }
 
+        @keyframes openEnvelope {
+            from { transform: scale(1) rotateY(0deg); opacity: 1; }
+            to { transform: scale(0.8) rotateY(90deg); opacity: 0; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes oldTvEffect {
+            0% { filter: contrast(1) brightness(1) saturate(1) blur(0px); transform: scale(1); }
+            50% { filter: contrast(1.5) brightness(0.5) saturate(2) blur(2px); transform: scale(1.1); }
+            100% { filter: contrast(0) brightness(0) saturate(0) blur(5px); transform: scale(0.5); opacity: 0; }
+        }
+        
         body {
-            font-family: 'B Nazanin', 'Vazirmatn', sans-serif;
+            font-family: 'Vazirmatn', 'B Nazanin', sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #1a1a1a;
+            color: #fff;
             text-align: center;
             overflow: hidden;
             position: relative;
         }
 
-        .full-screen-image {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1; /* برای قرار گرفتن در پس زمینه */
+        .container {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
         }
-        
+
+        .image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clickable-image {
+            width: 80%;
+            max-width: 400px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .clickable-image:hover {
+            transform: scale(1.05);
+        }
+
+        #open-envelope {
+            display: none;
+        }
+
+        #message-image-container {
+            display: none;
+            width: 100%;
+            height: auto;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        #message-image {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px #ffdb58;
+            background: linear-gradient(145deg, #ffd700, #ffc400);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 3px solid #ffc400;
+        }
+
         .confetti {
             position: absolute;
             top: 0;
@@ -42,83 +105,54 @@
             height: 100vh;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
             pointer-events: none;
-            z-index: 2; /* برای نمایش روی پس زمینه */
+            z-index: 2;
         }
-        
+
         .confetti.visible {
-            animation: fadeIn 0.5s forwards;
-        }
-
-        .content {
-            position: relative;
-            z-index: 3; /* برای قرار گرفتن روی انیمیشن و پس زمینه */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 90%;
-            max-width: 600px;
-            padding: 20px;
-        }
-        
-        #closed-envelope {
-            width: 80%;
-            max-width: 400px;
-            cursor: pointer;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        #message-container {
-            position: relative;
-            display: none;
-            width: 100%;
-            padding: 20px;
-            border-radius: 15px;
-            background-color: white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* سایه سه بعدی */
-            animation: fadeIn 0.5s forwards;
-        }
-        
-        #message-image {
-            width: 100%;
-            height: auto;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
         }
         
         .button-link {
             display: none;
-            margin-top: 30px;
+            margin-top: 40px;
             text-decoration: none;
         }
 
         .back-button {
-            padding: 15px 40px;
-            border-radius: 25px;
-            background-color: #17a2b8; /* رنگ اطلسی */
+            padding: 18px 50px;
+            border-radius: 30px;
+            background: linear-gradient(145deg, #007bff, #0056b3);
             color: white;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             border: none;
-            box-shadow: 0 5px #0e6c7c; /* سایه برای حالت سه بعدی */
+            box-shadow: 0 7px #003366, 0 10px 15px rgba(0, 0, 0, 0.3);
             transition: all 0.2s;
             cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
         
         .back-button:active {
-            box-shadow: 0 2px #0e6c7c;
-            transform: translateY(3px);
+            box-shadow: 0 3px #003366, 0 5px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(4px);
         }
     </style>
 </head>
 <body>
 
-    <img id="closed-envelope" src="klikon.png" alt="پاکت نامه بسته">
+    <div class="container">
+        <div class="image-container">
+            <img id="closed-envelope" class="clickable-image" src="klikon.png" alt="پاکت نامه بسته">
+            <img id="open-envelope" class="clickable-image" src="pakatebaz.png" alt="پاکت نامه باز">
+        </div>
 
-    <div id="message-container">
-        <img id="message-image" src="payam.png" alt="متن تایید اصالت کالا">
+        <div id="message-image-container">
+            <img id="message-image" src="payam.png" alt="متن تایید اصالت کالا">
+        </div>
     </div>
-
+    
     <img id="confetti-1" src="1.gif" alt="کاغذ رنگی" class="confetti">
     <img id="confetti-2" src="2.gif" alt="کاغذ رنگی" class="confetti">
     <img id="confetti-3" src="3.gif" alt="کاغذ رنگی" class="confetti">
@@ -130,7 +164,9 @@
 
     <script>
         const closedEnvelope = document.getElementById('closed-envelope');
-        const messageContainer = document.getElementById('message-container');
+        const openEnvelope = document.getElementById('open-envelope');
+        const messageContainer = document.getElementById('message-image-container');
+        const messageImage = document.getElementById('message-image');
         const backButtonLink = document.getElementById('back-button-link');
         const confettiGifs = [
             document.getElementById('confetti-1'),
@@ -140,32 +176,35 @@
         ];
 
         closedEnvelope.addEventListener('click', () => {
-            // مخفی کردن پاکت نامه بسته
-            closedEnvelope.style.display = 'none';
-
-            // نمایش پیام با انیمیشن
-            messageContainer.style.display = 'flex';
             
-            // نمایش GIFها به ترتیب و با تأخیر
+            closedEnvelope.style.animation = 'openEnvelope 0.5s forwards';
+
             setTimeout(() => {
-                confettiGifs[0].classList.add('visible'); // نمایش گیف اول
+                closedEnvelope.style.display = 'none';
+                openEnvelope.style.display = 'block';
+                
                 setTimeout(() => {
-                    confettiGifs[0].classList.remove('visible');
-                    confettiGifs[1].classList.add('visible'); // نمایش گیف دوم
+                    openEnvelope.style.display = 'none';
+                    messageContainer.style.display = 'block';
+                    messageImage.style.animation = 'bounceIn 1s forwards';
+                    
                     setTimeout(() => {
-                        confettiGifs[1].classList.remove('visible');
-                        confettiGifs[2].classList.add('visible'); // نمایش گیف سوم
+                        messageImage.style.animation = 'oldTvEffect 1s forwards';
+
                         setTimeout(() => {
-                            confettiGifs[2].classList.remove('visible');
-                            confettiGifs[3].classList.add('visible'); // نمایش گیف چهارم
+                            messageContainer.style.display = 'none';
+                            backButtonLink.style.display = 'block';
+                            confettiGifs.forEach(gif => gif.classList.add('visible'));
                             setTimeout(() => {
-                                confettiGifs[3].classList.remove('visible');
-                                backButtonLink.style.display = 'block'; // نمایش دکمه
-                            }, 1000); // 1 ثانیه پس از گیف آخر
-                        }, 1000); // 1 ثانیه پس از گیف سوم
-                    }, 1000); // 1 ثانیه پس از گیف دوم
-                }, 1000); // 1 ثانیه پس از گیف اول
-            }, 500); // 0.5 ثانیه پس از کلیک
+                                confettiGifs.forEach(gif => gif.classList.remove('visible'));
+                            }, 5000); 
+                        }, 1000); 
+
+                    }, 7000); 
+
+                }, 2000); 
+
+            }, 500);
         });
 
     </script>
