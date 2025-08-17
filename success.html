@@ -34,25 +34,31 @@
             background-size: 400% 400%;
             animation: gold-gradient-rotate 20s ease infinite;
         }
-        
+
         #container {
-            text-align: center;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
-        
+
         img {
-            max-width: 90%;
-            max-height: 80vh;
-            cursor: pointer;
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            cursor: pointer;
         }
-        
+
         .hidden {
             opacity: 0;
             visibility: hidden;
             position: absolute;
-            z-index: -1;
         }
-        
+
         /* انیمیشن محو شدن (Fade-out) */
         .fade-out {
             animation: fadeOut 0.5s forwards;
@@ -73,16 +79,65 @@
             to { opacity: 1; transform: scale(1); }
         }
         
-        /* انیمیشن Bounce (برای تصویر پیام) */
+        /* انیمیشن Bounce (برای تصویر پیام) و افکت برجسته */
         .bounce-effect {
             animation: bounceIn 0.8s forwards;
+            position: relative;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .payam-3d {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 6px 6px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            transform: rotateY(10deg) rotateX(5deg) scale(1.05);
+            transition: transform 0.5s ease;
+        }
+        .payam-3d:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1);
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: perspective(1000px) scale(0.3) rotateX(90deg); }
+            50% { opacity: 1; transform: perspective(1000px) scale(1.1) rotateX(-10deg); }
+            70% { transform: perspective(1000px) scale(0.9) rotateX(5deg); }
+            100% { transform: perspective(1000px) scale(1) rotateX(0deg); }
+        }
+
+        /* استایل کانتینر پیام و گیف‌ها */
+        #payam-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #payam {
+            max-width: 90%;
+            max-height: 90vh;
+            position: absolute;
+        }
+
+        #gif-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .gif {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
         
-        @keyframes bounceIn {
-            0% { opacity: 0; transform: scale(0.3); }
-            50% { opacity: 1; transform: scale(1.1); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); }
+        #gif1 {
+            bottom: 5vh;
         }
         
         /* استایل دکمه‌ها */
@@ -92,6 +147,8 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
+            position: absolute;
+            bottom: 20px;
         }
         
         button {
@@ -102,40 +159,33 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
+            transform: perspective(1000px) rotateX(0deg);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+        button:hover {
+            transform: perspective(1000px) rotateX(5deg) scale(1.05);
         }
-        
+
         .blue-button {
             background: linear-gradient(145deg, #007bff, #0056b3);
-            box-shadow: 0 5px #003366;
-        }
-        .blue-button:hover {
-            background: linear-gradient(145deg, #008cff, #0069d9);
+            box-shadow: 0 7px 0 #003366, 0 8px 15px rgba(0, 0, 0, 0.4);
         }
         .blue-button:active {
-            box-shadow: 0 2px #003366;
-            transform: translateY(3px);
+            box-shadow: 0 2px 0 #003366, 0 3px 6px rgba(0, 0, 0, 0.4);
+            transform: translateY(5px);
         }
-        
+
         .green-button {
             background: linear-gradient(145deg, #28a745, #1e7e34);
-            box-shadow: 0 5px #145224;
-        }
-        .green-button:hover {
-            background: linear-gradient(145deg, #2ecc4a, #219d3d);
+            box-shadow: 0 7px 0 #145224, 0 8px 15px rgba(0, 0, 0, 0.4);
         }
         .green-button:active {
-            box-shadow: 0 2px #145224;
-            transform: translateY(3px);
+            box-shadow: 0 2px 0 #145224, 0 3px 6px rgba(0, 0, 0, 0.4);
+            transform: translateY(5px);
         }
     </style>
 </head>
@@ -144,13 +194,14 @@
     <div id="container">
         <img id="klikkon" class="image-fade-in" src="klikkon.png" alt="کلیک کنید">
         <img id="pakatebaz" class="hidden" src="pakatebaz.png" alt="پاکت باز">
+        
         <div id="payam-container" class="hidden">
-            <img id="payam" class="bounce-effect" src="payam.png" alt="پیام">
+            <img id="payam" src="payam.png" alt="پیام">
             <div id="gif-container">
-                <img id="gif1" class="hidden" src="1.gif" alt="گیف 1">
-                <img id="gif2" class="hidden" src="2.gif" alt="گیف 2">
-                <img id="gif3" class="hidden" src="3.gif" alt="گیف 3">
-                <img id="gif4" class="hidden" src="4.gif" alt="گیف 4">
+                <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
+                <img id="gif2" class="hidden gif" src="2.gif" alt="گیف 2">
+                <img id="gif3" class="hidden gif" src="3.gif" alt="گیف 3">
+                <img id="gif4" class="hidden gif" src="4.gif" alt="گیف 4">
             </div>
         </div>
     </div>
@@ -167,8 +218,6 @@
             const payamContainer = document.getElementById('payam-container');
             const payamImg = document.getElementById('payam');
             const buttonContainer = document.getElementById('button-container');
-            const restartBtn = document.getElementById('restart-btn');
-            const backToFormBtn = document.getElementById('back-to-form-btn');
             const gifs = [
                 document.getElementById('gif1'),
                 document.getElementById('gif2'),
@@ -176,90 +225,81 @@
                 document.getElementById('gif4')
             ];
             let gifIndex = 0;
+            let gifInterval;
         
-            // تابع اصلی برای اجرای سناریو
             function startScenario() {
-                // ابتدا همه عناصر را مخفی می‌کنیم
-                klikkonImg.classList.remove('hidden');
-                pakatebazImg.classList.add('hidden');
+                // پاک کردن تمام کلاس‌ها و تایمرها
+                clearTimeout(gifInterval);
+                klikkonImg.classList.remove('hidden', 'fade-out');
+                pakatebazImg.classList.add('hidden', 'fade-out');
                 payamContainer.classList.add('hidden');
                 buttonContainer.classList.add('hidden');
                 document.body.classList.remove('gold-background');
                 gifs.forEach(gif => gif.classList.add('hidden'));
-        
-                // وقتی روی klikkon کلیک شد
+                payamImg.classList.remove('bounce-effect', 'payam-3d');
+                klikkonImg.style.cursor = 'pointer';
+
+                // افزودن event listener فقط برای klikkon
+                klikkonImg.removeEventListener('click', handleKlikkonClick); // برای جلوگیری از اضافه شدن چندین بار
                 klikkonImg.addEventListener('click', handleKlikkonClick, { once: true });
             }
         
             function handleKlikkonClick() {
-                // انیمیشن محو شدن klikkon
+                klikkonImg.style.cursor = 'default';
                 klikkonImg.classList.add('fade-out');
                 
                 setTimeout(() => {
                     klikkonImg.classList.add('hidden');
-                    klikkonImg.classList.remove('fade-out'); // ریست کردن انیمیشن
                     
-                    // نمایش pakatebaz
                     pakatebazImg.classList.remove('hidden');
                     pakatebazImg.classList.add('image-fade-in');
         
                     setTimeout(() => {
-                        // انیمیشن محو شدن pakatebaz
                         pakatebazImg.classList.add('fade-out');
                         
                         setTimeout(() => {
                             pakatebazImg.classList.add('hidden');
-                            pakatebazImg.classList.remove('fade-out'); // ریست کردن انیمیشن
-        
-                            // نمایش payam
+                            
                             payamContainer.classList.remove('hidden');
-                            payamImg.classList.add('bounce-effect');
+                            payamImg.classList.add('bounce-effect', 'payam-3d');
                             document.body.classList.add('gold-background');
         
                             // شروع نمایش گیف‌ها بعد از 40 ثانیه
                             setTimeout(showGifs, 40000); 
         
-                        }, 2000); // 2 ثانیه برای محو شدن pakatebaz
-                    }, 2000); // 2 ثانیه برای نمایش pakatebaz
-                }, 2000); // 2 ثانیه برای محو شدن klikkon
+                        }, 2000); 
+                    }, 2000); 
+                }, 2000);
             }
             
             function showGifs() {
                 if (gifIndex < gifs.length) {
-                    // مخفی کردن گیف قبلی
                     if (gifIndex > 0) {
                         gifs[gifIndex - 1].classList.add('hidden');
                     }
                     
-                    // نمایش گیف فعلی
                     gifs[gifIndex].classList.remove('hidden');
                     
                     gifIndex++;
-                    setTimeout(showGifs, 15000); // نمایش هر گیف به مدت 15 ثانیه
+                    gifInterval = setTimeout(showGifs, 15000);
                 } else {
-                    // وقتی همه گیف‌ها نمایش داده شدند
-                    // مخفی کردن آخرین گیف
                     if (gifs.length > 0) {
                         gifs[gifs.length - 1].classList.add('hidden');
                     }
                     
-                    // نمایش دکمه‌ها
                     buttonContainer.classList.remove('hidden');
                     
-                    // تنظیم رویداد برای دکمه‌ها
-                    restartBtn.addEventListener('click', () => {
-                        gifIndex = 0; // ریست کردن ایندکس گیف
+                    document.getElementById('restart-btn').addEventListener('click', () => {
+                        gifIndex = 0; 
                         startScenario();
                     });
         
-                    backToFormBtn.addEventListener('click', () => {
-                        // اینجا URL صفحه فرم قبلی را قرار دهید
+                    document.getElementById('back-to-form-btn').addEventListener('click', () => {
                         window.location.href = 'URL_Form_Page'; 
                     });
                 }
             }
         
-            // شروع سناریو برای اولین بار
             startScenario();
         });
     </script>
