@@ -175,9 +175,9 @@
         
         .gif.gif1 {
             max-width: 90%;
-            max-height: 35vh; /* Increased size for GIF 1 */
+            max-height: 35vh;
             position: relative;
-            top: unset;
+            top: -50px; /* Moves GIF 1 up */
             left: unset;
             transform: unset;
         }
@@ -187,18 +187,18 @@
         }
 
         #button-container {
-            margin-top: 30px; /* Increased margin */
+            margin-top: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px; /* Increased gap */
+            gap: 20px;
             animation: fadeInScaleUp 0.8s forwards;
             animation-delay: 0.8s;
         }
 
         button {
-            padding: 20px 40px; /* Increased padding */
-            font-size: 1.5rem; /* Increased font size */
+            padding: 20px 40px;
+            font-size: 1.5rem;
             font-weight: bold;
             color: white;
             border: none;
@@ -307,6 +307,7 @@
             let gifIndex = 0;
             let gifInterval;
             const GIF_DELAY = 3000; // 3 seconds
+            const GIF_OFFSET_Y = 50; // Offset in pixels to move GIFs up
 
             function startScenario() {
                 clearTimeout(gifInterval);
@@ -382,13 +383,13 @@
                     if (gifIndex === 0) { // GIF 1
                         gif1Container.classList.remove('hidden');
                         currentGif.classList.remove('hidden');
+                        // No position change needed here, handled by CSS
                     } else { // GIFs 2, 3, 4
                         const payamRect = payamImg.getBoundingClientRect();
                         currentGif.style.width = `${payamRect.width}px`;
                         currentGif.style.height = `${payamRect.height}px`;
                         
-                        // Calculate the absolute position relative to the viewport
-                        currentGif.style.top = `${payamRect.top + window.scrollY}px`;
+                        currentGif.style.top = `${payamRect.top + window.scrollY - GIF_OFFSET_Y}px`;
                         currentGif.style.left = `${payamRect.left + window.scrollX}px`;
                         
                         currentGif.classList.remove('hidden');
