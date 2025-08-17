@@ -243,31 +243,30 @@
             let timeoutIds = [];
         
             function startScenario() {
-                // پاکسازی کامل
+                // پاکسازی کامل تمام تایمرها و رویدادهای قبلی
                 timeoutIds.forEach(id => clearTimeout(id));
                 timeoutIds = [];
-                klikkonContainer.classList.remove('hidden');
-                pakatebazContainer.classList.add('hidden');
-                payamMainContainer.classList.add('hidden');
-                buttonContainer.classList.add('hidden');
-                gifs.forEach(gif => gif.classList.add('hidden'));
-                payamContainer.classList.remove('fade-out-effect');
-                klikkonImg.classList.remove('clicked');
-                pakatebazImg.classList.remove('shrink-out');
 
-                // تنظیم مجدد انیمیشن‌های CSS
-                void klikkonContainer.offsetWidth;
-                void pakatebazContainer.offsetWidth;
-                void payamMainContainer.offsetWidth;
+                // ریست کردن کلاس‌های CSS برای بازنشانی انیمیشن‌ها
+                klikkonContainer.className = 'image-container';
+                pakatebazContainer.className = 'image-container hidden';
+                payamMainContainer.className = 'hidden';
+                buttonContainer.className = 'hidden';
+                gifs.forEach(gif => gif.className = 'hidden gif');
+                payamContainer.className = '';
                 
+                // اطمینان از نمایش صحیح تصویر اولیه
+                klikkonContainer.classList.remove('hidden');
                 klikkonImg.style.cursor = 'pointer';
+
+                // حذف و اضافه کردن مجدد event listener برای جلوگیری از تکرار
                 klikkonImg.removeEventListener('click', handleKlikkonClick);
                 klikkonImg.addEventListener('click', handleKlikkonClick, { once: true });
             }
         
             function handleKlikkonClick() {
                 klikkonImg.style.cursor = 'default';
-                klikkonImg.classList.add('clicked');
+                klikkonContainer.classList.add('clicked');
                 
                 timeoutIds.push(setTimeout(() => {
                     klikkonContainer.classList.add('hidden');
