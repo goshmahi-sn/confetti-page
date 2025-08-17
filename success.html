@@ -15,7 +15,7 @@
             margin: 0;
             overflow: hidden;
             font-family: sans-serif;
-            background-color: white; /* پس‌زمینه کلی صفحه سفید شد */
+            background-color: white;
             color: black;
         }
 
@@ -52,6 +52,7 @@
             visibility: hidden;
             position: absolute;
             pointer-events: none;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s;
         }
         
         /* انیمیشن‌های پویا و جذاب */
@@ -77,13 +78,22 @@
             100% { opacity: 0; transform: scale(0.5) rotate(180deg); }
         }
 
-        /* استایل تصاویر */
+        /* استایل تصاویر برای پر کردن صفحه */
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
         img {
             max-width: 90%;
             max-height: 90vh;
             object-fit: contain;
         }
-        
+
         #klikkon {
             animation: fade-in-scale-up 1s forwards;
             cursor: pointer;
@@ -101,7 +111,7 @@
         
         #payam {
             position: relative;
-            z-index: 10; /* برای قرارگیری گیف‌ها روی تصویر */
+            z-index: 10;
         }
         
         #payam-container.fade-out-effect {
@@ -183,22 +193,28 @@
             color: white;
             border: 3px solid #0f8e12;
         }
-
     </style>
 </head>
 <body>
 
     <div id="container">
-        <img id="klikkon" src="klikkon.png" alt="کلیک کنید">
-        <img id="pakatebaz" class="hidden" src="pakatebaz.png" alt="پاکت باز">
+        <div id="klikkon-container" class="image-container">
+            <img id="klikkon" src="klikkon.png" alt="کلیک کنید">
+        </div>
         
-        <div id="payam-container" class="hidden">
-            <img id="payam" src="payam.png" alt="پیام">
-            <div class="gif-container">
-                <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
-                <img id="gif2" class="hidden gif" src="2.gif" alt="گیف 2">
-                <img id="gif3" class="hidden gif" src="3.gif" alt="گیف 3">
-                <img id="gif4" class="hidden gif" src="4.gif" alt="گیف 4">
+        <div id="pakatebaz-container" class="image-container hidden">
+            <img id="pakatebaz" src="pakatebaz.png" alt="پاکت باز">
+        </div>
+        
+        <div id="payam-main-container" class="hidden">
+            <div id="payam-container">
+                <img id="payam" src="payam.png" alt="پیام">
+                <div class="gif-container">
+                    <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
+                    <img id="gif2" class="hidden gif" src="2.gif" alt="گیف 2">
+                    <img id="gif3" class="hidden gif" src="3.gif" alt="گیف 3">
+                    <img id="gif4" class="hidden gif" src="4.gif" alt="گیف 4">
+                </div>
             </div>
         </div>
     </div>
@@ -210,10 +226,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const klikkonContainer = document.getElementById('klikkon-container');
             const klikkonImg = document.getElementById('klikkon');
+            const pakatebazContainer = document.getElementById('pakatebaz-container');
             const pakatebazImg = document.getElementById('pakatebaz');
+            const payamMainContainer = document.getElementById('payam-main-container');
             const payamContainer = document.getElementById('payam-container');
-            const payamImg = document.getElementById('payam');
             const buttonContainer = document.getElementById('button-container');
             const gifs = [
                 document.getElementById('gif1'),
@@ -228,21 +246,20 @@
                 // پاکسازی کامل
                 timeoutIds.forEach(id => clearTimeout(id));
                 timeoutIds = [];
-                klikkonImg.classList.remove('hidden', 'clicked');
-                pakatebazImg.classList.add('hidden', 'shrink-out');
-                payamContainer.classList.add('hidden', 'fade-out-effect');
+                klikkonContainer.classList.remove('hidden');
+                pakatebazContainer.classList.add('hidden');
+                payamMainContainer.classList.add('hidden');
                 buttonContainer.classList.add('hidden');
                 gifs.forEach(gif => gif.classList.add('hidden'));
-                gifIndex = 0;
+                payamContainer.classList.remove('fade-out-effect');
+                klikkonImg.classList.remove('clicked');
+                pakatebazImg.classList.remove('shrink-out');
 
                 // تنظیم مجدد انیمیشن‌های CSS
-                void klikkonImg.offsetWidth;
-                void pakatebazImg.offsetWidth;
-                void payamContainer.offsetWidth;
-                void buttonContainer.offsetWidth;
-                gifs.forEach(gif => void gif.offsetWidth);
-
-                // افزودن event listener فقط برای klikkon
+                void klikkonContainer.offsetWidth;
+                void pakatebazContainer.offsetWidth;
+                void payamMainContainer.offsetWidth;
+                
                 klikkonImg.style.cursor = 'pointer';
                 klikkonImg.removeEventListener('click', handleKlikkonClick);
                 klikkonImg.addEventListener('click', handleKlikkonClick, { once: true });
@@ -253,17 +270,17 @@
                 klikkonImg.classList.add('clicked');
                 
                 timeoutIds.push(setTimeout(() => {
-                    klikkonImg.classList.add('hidden');
+                    klikkonContainer.classList.add('hidden');
                     
-                    pakatebazImg.classList.remove('hidden');
+                    pakatebazContainer.classList.remove('hidden');
         
                     timeoutIds.push(setTimeout(() => {
                         pakatebazImg.classList.add('shrink-out');
                         
                         timeoutIds.push(setTimeout(() => {
-                            pakatebazImg.classList.add('hidden');
+                            pakatebazContainer.classList.add('hidden');
                             
-                            payamContainer.classList.remove('hidden');
+                            payamMainContainer.classList.remove('hidden');
         
                             // شروع نمایش گیف‌ها بعد از 30 ثانیه
                             timeoutIds.push(setTimeout(showGifs, 30000));
@@ -282,21 +299,19 @@
                     gifs[gifIndex].classList.remove('hidden');
                     
                     gifIndex++;
-                    timeoutIds.push(setTimeout(showGifs, 8000)); // نمایش هر گیف به مدت 8 ثانیه
+                    timeoutIds.push(setTimeout(showGifs, 8000));
                 } else {
                     if (gifs.length > 0) {
                         gifs[gifs.length - 1].classList.add('hidden');
                     }
                     
-                    // افکت خروج برای payam.png و پس‌زمینه آن
                     payamContainer.classList.add('fade-out-effect');
                     
                     timeoutIds.push(setTimeout(() => {
-                        payamContainer.classList.add('hidden');
+                        payamMainContainer.classList.add('hidden');
                         buttonContainer.classList.remove('hidden');
-                    }, 1000)); // زمان انیمیشن محو شدن
+                    }, 1000));
 
-                    // تنظیم رویداد برای دکمه‌ها
                     document.getElementById('restart-btn').addEventListener('click', () => {
                         startScenario();
                     });
