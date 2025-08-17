@@ -6,6 +6,8 @@
     <title>صفحه تبریک</title>
     
     <style>
+        @import url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css');
+
         :root {
             --gold-start: #FFD700;
             --gold-end: #FFF200;
@@ -20,12 +22,12 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            font-family: 'Vazirmatn', sans-serif;
+            font-family: 'Vazir', sans-serif;
             color: #000;
             background-color: #000;
             transition: background-color 1s ease-in-out;
         }
-
+        
         @keyframes gold-gradient-rotate {
             0% { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
@@ -58,7 +60,7 @@
             visibility: hidden;
             position: absolute;
         }
-        
+
         /* Animation Keyframes */
         @keyframes fadeInScaleUp {
             from { opacity: 0; transform: scale(0.9); }
@@ -79,11 +81,11 @@
 
         @keyframes pulseGlow {
             0%, 100% {
-                transform: scale(1) rotateY(0deg) perspective(1000px);
+                transform: scale(1);
                 box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.4);
             }
             50% {
-                transform: scale(1.05) rotateY(5deg) perspective(1000px);
+                transform: scale(1.05);
                 box-shadow: 0 0 20px var(--pulse-color), 0 0 40px var(--pulse-color), 0 0 60px var(--pulse-color);
             }
         }
@@ -104,11 +106,19 @@
         .bounce-in-effect { animation: bounceIn 0.8s forwards; }
         .pulse-glow-effect { animation: pulseGlow 2s ease-in-out infinite; }
         
-        /* Gold gradient effect for payam.png */
+        #payam-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         #payam {
-            position: absolute;
             max-width: 90%;
-            max-height: 90vh;
+            max-height: 70vh;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
             background: linear-gradient(-45deg, var(--gold-start), var(--gold-end), var(--gold-start));
@@ -123,8 +133,14 @@
             height: 100%;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
-            pointer-events: none; /* Allows clicks to pass through */
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        #gif-container-1 {
+            position: absolute;
+            bottom: 5vh;
+            pointer-events: none;
         }
 
         .gif {
@@ -198,11 +214,15 @@
         
         <div id="payam-container" class="hidden">
             <img id="payam" src="payam.png" alt="پیام">
+            
             <div id="gif-container">
-                <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
                 <img id="gif2" class="hidden gif" src="2.gif" alt="گیف 2">
                 <img id="gif3" class="hidden gif" src="3.gif" alt="گیف 3">
                 <img id="gif4" class="hidden gif" src="4.gif" alt="گیف 4">
+            </div>
+
+            <div id="gif-container-1" class="hidden">
+                <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
             </div>
         </div>
     </div>
@@ -219,8 +239,14 @@
             const payamContainer = document.getElementById('payam-container');
             const payamImg = document.getElementById('payam');
             const buttonContainer = document.getElementById('button-container');
+            const gif1Container = document.getElementById('gif-container-1');
             const gifs = [
                 document.getElementById('gif1'),
+                document.getElementById('gif2'),
+                document.getElementById('gif3'),
+                document.getElementById('gif4')
+            ];
+            const payamGifs = [
                 document.getElementById('gif2'),
                 document.getElementById('gif3'),
                 document.getElementById('gif4')
@@ -231,23 +257,25 @@
             let payamTimeout;
 
             function startScenario() {
-                // Reset everything
                 clearTimeout(gifInterval);
                 clearTimeout(payamTimeout);
                 
                 klikkonImg.classList.remove('hidden', 'fade-out', 'image-fade-in');
                 klikkonImg.classList.add('image-fade-in');
-
                 pakatebazImg.classList.add('hidden');
                 payamContainer.classList.add('hidden');
                 buttonContainer.classList.add('hidden');
+                gif1Container.classList.add('hidden');
                 document.body.classList.remove('white-background');
                 payamImg.classList.remove('pulse-glow-effect');
 
-                gifs.forEach(gif => gif.classList.add('hidden'));
+                gifs.forEach(gif => {
+                    gif.classList.add('hidden');
+                    gif.style.top = '';
+                    gif.style.left = '';
+                });
 
                 klikkonImg.style.cursor = 'pointer';
-
                 klikkonImg.removeEventListener('click', handleKlikkonClick);
                 klikkonImg.addEventListener('click', handleKlikkonClick, { once: true });
             }
@@ -258,7 +286,6 @@
                 
                 setTimeout(() => {
                     klikkonImg.classList.add('hidden');
-                    
                     pakatebazImg.classList.remove('hidden');
                     pakatebazImg.classList.add('image-fade-in');
         
@@ -272,7 +299,6 @@
                             payamContainer.classList.remove('hidden');
                             payamImg.classList.add('bounce-in-effect');
         
-                            // Start the payam.png timer
                             payamTimeout = setTimeout(() => {
                                 payamImg.classList.add('pulse-glow-effect');
                                 showGifs();
@@ -293,7 +319,19 @@
                         }, 800);
                     }
                     
-                    gifs[gifIndex].classList.remove('hidden');
+                    const currentGif = gifs[gifIndex];
+                    currentGif.classList.remove('hidden');
+                    
+                    if (gifIndex === 0) { // GIF 1
+                        gif1Container.classList.remove('hidden');
+                    } else { // GIFs 2, 3, 4
+                        const payamRect = payamImg.getBoundingClientRect();
+                        const randomTop = Math.random() * (payamRect.height * 0.7) + (payamRect.height * 0.15);
+                        const randomLeft = Math.random() * (payamRect.width * 0.7) + (payamRect.width * 0.15);
+                        
+                        currentGif.style.top = `${randomTop}px`;
+                        currentGif.style.left = `${randomLeft}px`;
+                    }
                     
                     gifIndex++;
                     gifInterval = setTimeout(showGifs, 8000);
