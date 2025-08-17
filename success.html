@@ -15,95 +15,26 @@
             margin: 0;
             overflow: hidden;
             font-family: sans-serif;
-            color: white;
-            background-color: #000;
+            background-color: white; /* پس‌زمینه کلی صفحه سفید شد */
+            color: black;
         }
-        
-        /* انیمیشن چرخش سه بعدی برای پس‌زمینه */
-        @keyframes gold-gradient-rotate {
+
+        /* انیمیشن چرخش پس‌زمینه payam.png */
+        @keyframes gold-background-effect {
             0% {
-                background-position: 0% 50%;
+                box-shadow: 0 0 50px 20px rgba(255, 215, 0, 0.7);
+                transform: perspective(1000px) rotateY(0deg) scale(1.0);
+            }
+            50% {
+                box-shadow: 0 0 80px 30px rgba(255, 223, 0, 0.9);
+                transform: perspective(1000px) rotateY(15deg) scale(1.05);
             }
             100% {
-                background-position: 100% 50%;
+                box-shadow: 0 0 50px 20px rgba(255, 215, 0, 0.7);
+                transform: perspective(1000px) rotateY(0deg) scale(1.0);
             }
         }
         
-        .gold-background {
-            background: linear-gradient(-45deg, #FFD700, #FFCC00, #FFEB00, #FFF200);
-            background-size: 400% 400%;
-            animation: gold-gradient-rotate 20s ease infinite;
-        }
-
-        #container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        img {
-            max-width: 100%;
-            max-height: 100vh;
-            object-fit: contain;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-            cursor: pointer;
-        }
-
-        .hidden {
-            opacity: 0;
-            visibility: hidden;
-            position: absolute;
-        }
-
-        /* انیمیشن محو شدن (Fade-out) */
-        .fade-out {
-            animation: fadeOut 0.5s forwards;
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.8); }
-        }
-        
-        /* انیمیشن وارد شدن (Fade-in) */
-        .image-fade-in {
-            animation: fadeIn 0.5s forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        /* انیمیشن Bounce (برای تصویر پیام) و افکت برجسته */
-        .bounce-effect {
-            animation: bounceIn 0.8s forwards;
-            position: relative;
-            transform: perspective(1000px) rotateX(0deg);
-        }
-
-        .payam-3d {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 6px 6px rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            transform: rotateY(10deg) rotateX(5deg) scale(1.05);
-            transition: transform 0.5s ease;
-        }
-        .payam-3d:hover {
-            transform: rotateY(0deg) rotateX(0deg) scale(1);
-        }
-
-        @keyframes bounceIn {
-            0% { opacity: 0; transform: perspective(1000px) scale(0.3) rotateX(90deg); }
-            50% { opacity: 1; transform: perspective(1000px) scale(1.1) rotateX(-10deg); }
-            70% { transform: perspective(1000px) scale(0.9) rotateX(5deg); }
-            100% { transform: perspective(1000px) scale(1) rotateX(0deg); }
-        }
-
-        /* استایل کانتینر پیام و گیف‌ها */
         #payam-container {
             position: relative;
             width: 100%;
@@ -111,93 +42,159 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(-45deg, #FFD700, #FFCC00, #FFEB00, #FFF200);
+            background-size: 400% 400%;
+            animation: gold-background-effect 5s ease infinite alternate;
         }
 
-        #payam {
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            pointer-events: none;
+        }
+        
+        /* انیمیشن‌های پویا و جذاب */
+        @keyframes fade-in-scale-up {
+            0% { opacity: 0; transform: scale(0.5) translateY(50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes fade-out-down {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(50px); }
+        }
+        
+        @keyframes bounce-in-3d {
+            0% { opacity: 0; transform: scale(0.5) rotateX(90deg) translateY(-200px); }
+            60% { opacity: 1; transform: scale(1.1) rotateX(-10deg) translateY(0); }
+            80% { transform: scale(0.9) rotateX(5deg) translateY(-5px); }
+            100% { transform: scale(1) rotateX(0deg) translateY(0); }
+        }
+
+        @keyframes shrink-fade-out {
+            0% { opacity: 1; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(0.5) rotate(180deg); }
+        }
+
+        /* استایل تصاویر */
+        img {
             max-width: 90%;
             max-height: 90vh;
-            position: absolute;
+            object-fit: contain;
+        }
+        
+        #klikkon {
+            animation: fade-in-scale-up 1s forwards;
+            cursor: pointer;
+        }
+        #klikkon.clicked {
+            animation: fade-out-down 0.8s forwards;
         }
 
-        #gif-container {
+        #pakatebaz {
+            animation: bounce-in-3d 1s forwards;
+        }
+        #pakatebaz.shrink-out {
+            animation: shrink-fade-out 0.8s forwards;
+        }
+        
+        #payam {
+            position: relative;
+            z-index: 10; /* برای قرارگیری گیف‌ها روی تصویر */
+        }
+        
+        #payam-container.fade-out-effect {
+            animation: fade-out-down 1s forwards;
+        }
+
+        /* کانتینر گیف‌ها */
+        .gif-container {
             position: absolute;
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
         }
 
         .gif {
             position: absolute;
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 80%;
+            max-height: 80%;
             object-fit: contain;
         }
-        
+
         #gif1 {
             bottom: 5vh;
+            animation: bounce-in-3d 1s forwards;
         }
         
+        #gif2, #gif3, #gif4 {
+            animation: fade-in-scale-up 1s forwards;
+        }
+
         /* استایل دکمه‌ها */
         #button-container {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
             position: absolute;
-            bottom: 20px;
+            bottom: 5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            animation: bounce-in-3d 1s forwards;
         }
         
         button {
             padding: 15px 30px;
-            font-size: 18px;
+            font-size: 1.1em;
             font-weight: bold;
-            color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 50px;
             cursor: pointer;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.3s ease-in-out;
             position: relative;
             overflow: hidden;
-            transform: perspective(1000px) rotateX(0deg);
-            transition: transform 0.3s, box-shadow 0.3s;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(0);
+        }
+        
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
-        button:hover {
-            transform: perspective(1000px) rotateX(5deg) scale(1.05);
+        /* انیمیشن کلیک دکمه‌ها */
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         .blue-button {
-            background: linear-gradient(145deg, #007bff, #0056b3);
-            box-shadow: 0 7px 0 #003366, 0 8px 15px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            border: 3px solid #005bb5;
         }
-        .blue-button:active {
-            box-shadow: 0 2px 0 #003366, 0 3px 6px rgba(0, 0, 0, 0.4);
-            transform: translateY(5px);
+        
+        .green-button {
+            background: linear-gradient(135deg, #4ef536, #14c718);
+            color: white;
+            border: 3px solid #0f8e12;
         }
 
-        .green-button {
-            background: linear-gradient(145deg, #28a745, #1e7e34);
-            box-shadow: 0 7px 0 #145224, 0 8px 15px rgba(0, 0, 0, 0.4);
-        }
-        .green-button:active {
-            box-shadow: 0 2px 0 #145224, 0 3px 6px rgba(0, 0, 0, 0.4);
-            transform: translateY(5px);
-        }
     </style>
 </head>
 <body>
 
     <div id="container">
-        <img id="klikkon" class="image-fade-in" src="klikkon.png" alt="کلیک کنید">
+        <img id="klikkon" src="klikkon.png" alt="کلیک کنید">
         <img id="pakatebaz" class="hidden" src="pakatebaz.png" alt="پاکت باز">
         
         <div id="payam-container" class="hidden">
             <img id="payam" src="payam.png" alt="پیام">
-            <div id="gif-container">
+            <div class="gif-container">
                 <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
                 <img id="gif2" class="hidden gif" src="2.gif" alt="گیف 2">
                 <img id="gif3" class="hidden gif" src="3.gif" alt="گیف 3">
@@ -225,51 +222,55 @@
                 document.getElementById('gif4')
             ];
             let gifIndex = 0;
-            let gifInterval;
+            let timeoutIds = [];
         
             function startScenario() {
-                // پاک کردن تمام کلاس‌ها و تایمرها
-                clearTimeout(gifInterval);
-                klikkonImg.classList.remove('hidden', 'fade-out');
-                pakatebazImg.classList.add('hidden', 'fade-out');
-                payamContainer.classList.add('hidden');
+                // پاکسازی کامل
+                timeoutIds.forEach(id => clearTimeout(id));
+                timeoutIds = [];
+                klikkonImg.classList.remove('hidden', 'clicked');
+                pakatebazImg.classList.add('hidden', 'shrink-out');
+                payamContainer.classList.add('hidden', 'fade-out-effect');
                 buttonContainer.classList.add('hidden');
-                document.body.classList.remove('gold-background');
                 gifs.forEach(gif => gif.classList.add('hidden'));
-                payamImg.classList.remove('bounce-effect', 'payam-3d');
-                klikkonImg.style.cursor = 'pointer';
+                gifIndex = 0;
+
+                // تنظیم مجدد انیمیشن‌های CSS
+                void klikkonImg.offsetWidth;
+                void pakatebazImg.offsetWidth;
+                void payamContainer.offsetWidth;
+                void buttonContainer.offsetWidth;
+                gifs.forEach(gif => void gif.offsetWidth);
 
                 // افزودن event listener فقط برای klikkon
-                klikkonImg.removeEventListener('click', handleKlikkonClick); // برای جلوگیری از اضافه شدن چندین بار
+                klikkonImg.style.cursor = 'pointer';
+                klikkonImg.removeEventListener('click', handleKlikkonClick);
                 klikkonImg.addEventListener('click', handleKlikkonClick, { once: true });
             }
         
             function handleKlikkonClick() {
                 klikkonImg.style.cursor = 'default';
-                klikkonImg.classList.add('fade-out');
+                klikkonImg.classList.add('clicked');
                 
-                setTimeout(() => {
+                timeoutIds.push(setTimeout(() => {
                     klikkonImg.classList.add('hidden');
                     
                     pakatebazImg.classList.remove('hidden');
-                    pakatebazImg.classList.add('image-fade-in');
         
-                    setTimeout(() => {
-                        pakatebazImg.classList.add('fade-out');
+                    timeoutIds.push(setTimeout(() => {
+                        pakatebazImg.classList.add('shrink-out');
                         
-                        setTimeout(() => {
+                        timeoutIds.push(setTimeout(() => {
                             pakatebazImg.classList.add('hidden');
                             
                             payamContainer.classList.remove('hidden');
-                            payamImg.classList.add('bounce-effect', 'payam-3d');
-                            document.body.classList.add('gold-background');
         
-                            // شروع نمایش گیف‌ها بعد از 40 ثانیه
-                            setTimeout(showGifs, 40000); 
+                            // شروع نمایش گیف‌ها بعد از 30 ثانیه
+                            timeoutIds.push(setTimeout(showGifs, 30000));
         
-                        }, 2000); 
-                    }, 2000); 
-                }, 2000);
+                        }, 1000)); 
+                    }, 2000)); 
+                }, 1000));
             }
             
             function showGifs() {
@@ -281,16 +282,22 @@
                     gifs[gifIndex].classList.remove('hidden');
                     
                     gifIndex++;
-                    gifInterval = setTimeout(showGifs, 15000);
+                    timeoutIds.push(setTimeout(showGifs, 8000)); // نمایش هر گیف به مدت 8 ثانیه
                 } else {
                     if (gifs.length > 0) {
                         gifs[gifs.length - 1].classList.add('hidden');
                     }
                     
-                    buttonContainer.classList.remove('hidden');
+                    // افکت خروج برای payam.png و پس‌زمینه آن
+                    payamContainer.classList.add('fade-out-effect');
                     
+                    timeoutIds.push(setTimeout(() => {
+                        payamContainer.classList.add('hidden');
+                        buttonContainer.classList.remove('hidden');
+                    }, 1000)); // زمان انیمیشن محو شدن
+
+                    // تنظیم رویداد برای دکمه‌ها
                     document.getElementById('restart-btn').addEventListener('click', () => {
-                        gifIndex = 0; 
                         startScenario();
                     });
         
