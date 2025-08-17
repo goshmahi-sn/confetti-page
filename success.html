@@ -9,8 +9,8 @@
         @import url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css');
 
         :root {
-            --gold-start: #DAA520; /* Goldenrod for deeper gold */
-            --gold-end: #FFD700;   /* Gold */
+            --gold-start: #DAA520;
+            --gold-end: #FFD700;
             --pulse-color: #DAA520;
         }
 
@@ -153,15 +153,22 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            margin-top: 0; /* Stuck directly below payam */
+            margin-top: 0;
             pointer-events: none;
         }
 
         .gif {
-            max-width: 80%;
-            max-height: 80%;
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             animation: gif-slide-in-up 0.6s forwards;
+        }
+
+        .gif.gif1 {
+            max-width: 90%;
+            max-height: 20vh;
         }
 
         .gif.fade-out {
@@ -226,9 +233,8 @@
                 padding: 10px 20px;
                 font-size: 1rem;
             }
-            .gif {
-                max-width: 70%;
-                max-height: 70%;
+            .gif.gif1 {
+                max-height: 15vh;
             }
         }
 
@@ -240,9 +246,8 @@
                 padding: 8px 16px;
                 font-size: 0.9rem;
             }
-            .gif {
-                max-width: 60%;
-                max-height: 60%;
+            .gif.gif1 {
+                max-height: 10vh;
             }
         }
     </style>
@@ -263,7 +268,7 @@
             </div>
 
             <div id="gif-container-1" class="hidden">
-                <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
+                <img id="gif1" class="hidden gif gif1" src="1.gif" alt="گیف 1">
             </div>
 
             <div id="button-container" class="hidden">
@@ -290,11 +295,9 @@
             
             let gifIndex = 0;
             let gifInterval;
-            let payamTimeout;
 
             function startScenario() {
                 clearTimeout(gifInterval);
-                clearTimeout(payamTimeout);
                 
                 klikkonImg.classList.remove('hidden', 'fade-out', 'image-fade-in');
                 klikkonImg.classList.add('image-fade-in');
@@ -337,15 +340,11 @@
                                 
                                 payamContainer.classList.remove('hidden');
                                 payamImg.classList.add('bounce-in-effect');
-            
-                                payamTimeout = setTimeout(() => {
-                                    payamImg.classList.add('pulse-glow-effect');
-                                    showGifs();
-                                }, 0); 
-            
+                                payamImg.classList.add('pulse-glow-effect');
+                                showGifs();
                             }, 500); 
                         }, 500); 
-                    }, 3000);
+                    }, 1000);
                 }, 500);
             }
             
@@ -365,26 +364,28 @@
                     if (gifIndex === 0) { // GIF 1
                         gif1Container.classList.remove('hidden');
                     } else { // GIFs 2, 3, 4
+                        const payamRect = payamImg.getBoundingClientRect();
                         currentGif.style.position = 'absolute';
                         currentGif.style.top = `50%`;
                         currentGif.style.left = `50%`;
                         currentGif.style.transform = `translate(-50%, -50%)`;
+                        currentGif.style.width = `${payamRect.width - 30}px`; // Match payam size minus padding
+                        currentGif.style.height = `${payamRect.height - 30}px`;
                     }
                     
                     gifIndex++;
-                    gifInterval = setTimeout(showGifs, 3750);
+                    gifInterval = setTimeout(showGifs, 3000); // 3 seconds per GIF
                 } else {
                     if (gifs.length > 0) {
                         gifs[gifs.length - 1].classList.add('fade-out');
                         setTimeout(() => {
                             gifs[gifs.length - 1].classList.add('hidden');
                             gifs[gifs.length - 1].classList.remove('fade-out');
+                            buttonContainer.classList.remove('hidden');
+                            payamImg.classList.remove('pulse-glow-effect');
+                            payamImg.classList.remove('bounce-in-effect');
                         }, 600);
                     }
-                    
-                    buttonContainer.classList.remove('hidden');
-                    payamImg.classList.remove('pulse-glow-effect');
-                    payamImg.classList.remove('bounce-in-effect');
                     
                     document.getElementById('restart-btn').removeEventListener('click', restartHandler);
                     document.getElementById('restart-btn').addEventListener('click', restartHandler);
