@@ -164,11 +164,19 @@
             height: 100%;
             object-fit: contain;
             animation: gif-slide-in-up 0.6s forwards;
+            position: absolute; /* Add this to position correctly */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .gif.gif1 {
             max-width: 90%;
             max-height: 20vh;
+            position: relative;
+            top: unset;
+            left: unset;
+            transform: unset;
         }
 
         .gif.fade-out {
@@ -295,13 +303,16 @@
             
             let gifIndex = 0;
             let gifInterval;
+            const GIF_DELAY = 3000; // 3 seconds
 
             function startScenario() {
                 clearTimeout(gifInterval);
+                gifIndex = 0;
                 
                 klikkonImg.classList.remove('hidden', 'fade-out', 'image-fade-in');
                 klikkonImg.classList.add('image-fade-in');
                 pakatebazImg.classList.add('hidden');
+                pakatebazImg.classList.remove('fade-out');
                 payamContainer.classList.add('hidden');
                 buttonContainer.classList.add('hidden');
                 gif1Container.classList.add('hidden');
@@ -310,9 +321,12 @@
 
                 gifs.forEach(gif => {
                     gif.classList.add('hidden');
+                    gif.classList.remove('fade-out');
                     gif.style.top = '';
                     gif.style.left = '';
                     gif.style.transform = '';
+                    gif.style.width = '';
+                    gif.style.height = '';
                 });
 
                 klikkonImg.style.cursor = 'pointer';
@@ -343,49 +357,45 @@
                                 payamImg.classList.add('pulse-glow-effect');
                                 showGifs();
                             }, 500); 
-                        }, 500); 
-                    }, 1000);
+                        }, 1000); // Changed this from 500ms to 1000ms as requested
+                    }, 500);
                 }, 500);
             }
             
             function showGifs() {
-                if (gifIndex < gifs.length) {
-                    if (gifIndex > 0) {
-                        gifs[gifIndex - 1].classList.add('fade-out');
+                // Hide all previous GIFs
+                gifs.forEach(gif => {
+                    if (gif.classList.contains('hidden') === false) {
+                        gif.classList.add('fade-out');
                         setTimeout(() => {
-                             gifs[gifIndex - 1].classList.add('hidden');
-                             gifs[gifIndex - 1].classList.remove('fade-out');
+                            gif.classList.add('hidden');
+                            gif.classList.remove('fade-out');
                         }, 600);
                     }
-                    
+                });
+
+                if (gifIndex < gifs.length) {
                     const currentGif = gifs[gifIndex];
-                    currentGif.classList.remove('hidden');
                     
                     if (gifIndex === 0) { // GIF 1
                         gif1Container.classList.remove('hidden');
+                        currentGif.classList.remove('hidden');
                     } else { // GIFs 2, 3, 4
                         const payamRect = payamImg.getBoundingClientRect();
-                        currentGif.style.position = 'absolute';
-                        currentGif.style.top = `50%`;
-                        currentGif.style.left = `50%`;
-                        currentGif.style.transform = `translate(-50%, -50%)`;
-                        currentGif.style.width = `${payamRect.width - 30}px`; // Match payam size minus padding
-                        currentGif.style.height = `${payamRect.height - 30}px`;
+                        currentGif.style.width = `${payamRect.width}px`;
+                        currentGif.style.height = `${payamRect.height}px`;
+                        currentGif.style.top = `${payamRect.top + window.scrollY}px`;
+                        currentGif.style.left = `${payamRect.left + window.scrollX}px`;
+                        currentGif.classList.remove('hidden');
                     }
                     
                     gifIndex++;
-                    gifInterval = setTimeout(showGifs, 3000); // 3 seconds per GIF
+                    gifInterval = setTimeout(showGifs, GIF_DELAY);
                 } else {
-                    if (gifs.length > 0) {
-                        gifs[gifs.length - 1].classList.add('fade-out');
-                        setTimeout(() => {
-                            gifs[gifs.length - 1].classList.add('hidden');
-                            gifs[gifs.length - 1].classList.remove('fade-out');
-                            buttonContainer.classList.remove('hidden');
-                            payamImg.classList.remove('pulse-glow-effect');
-                            payamImg.classList.remove('bounce-in-effect');
-                        }, 600);
-                    }
+                    // All GIFs have been shown
+                    buttonContainer.classList.remove('hidden');
+                    payamImg.classList.remove('pulse-glow-effect');
+                    payamImg.classList.remove('bounce-in-effect');
                     
                     document.getElementById('restart-btn').removeEventListener('click', restartHandler);
                     document.getElementById('restart-btn').addEventListener('click', restartHandler);
@@ -396,7 +406,6 @@
             }
 
             const restartHandler = () => {
-                gifIndex = 0; 
                 startScenario();
             };
 
