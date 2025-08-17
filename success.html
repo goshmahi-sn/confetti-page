@@ -9,9 +9,9 @@
         @import url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css');
 
         :root {
-            --gold-start: #FFD700;
-            --gold-end: #FFF200;
-            --pulse-color: #ffd900;
+            --gold-start: #DAA520; /* Goldenrod for deeper gold */
+            --gold-end: #FFD700;   /* Gold */
+            --pulse-color: #DAA520;
         }
 
         body {
@@ -30,7 +30,8 @@
         
         @keyframes gold-gradient-rotate {
             0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .white-background {
@@ -51,7 +52,7 @@
             max-width: 100%;
             max-height: 100vh;
             object-fit: contain;
-            transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             cursor: pointer;
         }
 
@@ -61,55 +62,60 @@
             position: absolute;
         }
 
-        /* Animation Keyframes */
+        /* Enhanced Animation Keyframes */
         @keyframes fadeInScaleUp {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.8) rotate(5deg); }
+            to { opacity: 1; transform: scale(1) rotate(0deg); }
         }
 
         @keyframes fadeOutScaleDown {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.9); }
+            from { opacity: 1; transform: scale(1) rotate(0deg); }
+            to { opacity: 0; transform: scale(0.8) rotate(-5deg); }
         }
 
         @keyframes bounceIn {
-            0% { opacity: 0; transform: perspective(1000px) scale(0.3) rotateX(90deg); }
-            60% { opacity: 1; transform: perspective(1000px) scale(1.1) rotateX(-10deg); }
-            80% { transform: perspective(1000px) scale(0.9) rotateX(5deg); }
-            100% { transform: perspective(1000px) scale(1) rotateX(0deg); }
+            0% { opacity: 0; transform: perspective(1000px) scale(0.3) rotateX(90deg) rotateY(10deg); }
+            60% { opacity: 1; transform: perspective(1000px) scale(1.2) rotateX(-15deg) rotateY(-5deg); }
+            80% { transform: perspective(1000px) scale(0.9) rotateX(10deg) rotateY(3deg); }
+            100% { transform: perspective(1000px) scale(1) rotateX(0deg) rotateY(0deg); }
         }
 
         @keyframes pulseGlow {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.4);
+                box-shadow: 0 0 15px rgba(218, 165, 32, 0.5), 0 0 30px rgba(218, 165, 32, 0.5), 0 0 45px rgba(218, 165, 32, 0.3);
             }
             50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 20px var(--pulse-color), 0 0 40px var(--pulse-color), 0 0 60px var(--pulse-color);
+                transform: scale(1.08);
+                box-shadow: 0 0 30px var(--pulse-color), 0 0 60px var(--pulse-color), 0 0 90px var(--pulse-color), 0 0 120px var(--pulse-color);
             }
         }
         
         @keyframes gif-slide-in-up {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from { transform: translateY(50px) rotate(5deg); opacity: 0; }
+            to { transform: translateY(0) rotate(0deg); opacity: 1; }
         }
 
         @keyframes gif-slide-out-down {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(100px); opacity: 0; }
+            from { transform: translateY(0) rotate(0deg); opacity: 1; }
+            to { transform: translateY(50px) rotate(-5deg); opacity: 0; }
+        }
+
+        @keyframes buttonHoverPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 7px 0 #145224, 0 8px 15px rgba(0, 0, 0, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 0 #145224, 0 12px 20px rgba(0, 0, 0, 0.5); }
         }
 
         /* Applying Animations */
-        .image-fade-in { animation: fadeInScaleUp 0.7s forwards; }
-        .fade-out { animation: fadeOutScaleDown 0.7s forwards; }
-        .bounce-in-effect { animation: bounceIn 0.8s forwards; }
-        .pulse-glow-effect { animation: pulseGlow 2s ease-in-out infinite; }
+        .image-fade-in { animation: fadeInScaleUp 0.5s forwards; }
+        .fade-out { animation: fadeOutScaleDown 0.5s forwards; }
+        .bounce-in-effect { animation: bounceIn 0.6s forwards; }
+        .pulse-glow-effect { animation: pulseGlow 1.5s ease-in-out infinite; }
         
         #payam-container {
             position: relative;
             width: 100%;
-            height: 100%;
+            max-width: 90%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -118,41 +124,48 @@
 
         #payam {
             max-width: 90%;
-            max-height: 70vh;
+            max-height: 60vh;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
             background: linear-gradient(-45deg, var(--gold-start), var(--gold-end), var(--gold-start));
-            background-size: 400% 400%;
-            animation: gold-gradient-rotate 20s ease infinite;
-            padding: 10px;
+            background-size: 600% 600%;
+            animation: gold-gradient-rotate 15s ease infinite;
+            padding: 15px;
+            position: relative;
         }
 
         #gif-container {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             pointer-events: none;
+            z-index: 1;
         }
         
         #gif-container-1 {
-            position: absolute;
-            bottom: 5vh;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 0; /* Stuck directly below payam */
             pointer-events: none;
         }
 
         .gif {
-            position: absolute;
             max-width: 80%;
             max-height: 80%;
             object-fit: contain;
-            animation: gif-slide-in-up 0.8s forwards;
+            animation: gif-slide-in-up 0.6s forwards;
         }
 
         .gif.fade-out {
-            animation: gif-slide-out-down 0.8s forwards;
+            animation: gif-slide-out-down 0.6s forwards;
         }
 
         #button-container {
@@ -161,10 +174,8 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            position: absolute;
-            bottom: 20px;
-            animation: fadeInScaleUp 1s forwards;
-            animation-delay: 1s;
+            animation: fadeInScaleUp 0.8s forwards;
+            animation-delay: 0.8s;
         }
 
         button {
@@ -179,10 +190,12 @@
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+            animation: buttonHoverPulse 2s infinite ease-in-out;
         }
         
         button:hover {
-            transform: translateY(-2px) rotateX(5deg);
+            transform: translateY(-3px) rotateX(8deg) scale(1.05);
+            box-shadow: 0 10px 0 #003366, 0 12px 20px rgba(0, 0, 0, 0.5);
         }
 
         .blue-button {
@@ -204,6 +217,34 @@
             box-shadow: 0 2px 0 #145224, 0 3px 6px rgba(0, 0, 0, 0.4);
             transform: translateY(5px);
         }
+
+        @media (max-width: 768px) {
+            #payam {
+                max-height: 50vh;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            .gif {
+                max-width: 70%;
+                max-height: 70%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #payam {
+                max-height: 40vh;
+            }
+            button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            .gif {
+                max-width: 60%;
+                max-height: 60%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -224,12 +265,12 @@
             <div id="gif-container-1" class="hidden">
                 <img id="gif1" class="hidden gif" src="1.gif" alt="گیف 1">
             </div>
+
+            <div id="button-container" class="hidden">
+                <button id="restart-btn" class="green-button">شروع مجدد</button>
+                <button id="back-to-form-btn" class="blue-button">بازگشت به فرم</button>
+            </div>
         </div>
-    </div>
-    
-    <div id="button-container" class="hidden">
-        <button id="restart-btn" class="green-button">شروع مجدد</button>
-        <button id="back-to-form-btn" class="blue-button">بازگشت به فرم</button>
     </div>
 
     <script>
@@ -242,11 +283,6 @@
             const gif1Container = document.getElementById('gif-container-1');
             const gifs = [
                 document.getElementById('gif1'),
-                document.getElementById('gif2'),
-                document.getElementById('gif3'),
-                document.getElementById('gif4')
-            ];
-            const payamGifs = [
                 document.getElementById('gif2'),
                 document.getElementById('gif3'),
                 document.getElementById('gif4')
@@ -304,9 +340,9 @@
                                 showGifs();
                             }, 30000); 
         
-                        }, 700); 
-                    }, 700); 
-                }, 700);
+                        }, 500); 
+                    }, 500); 
+                }, 500);
             }
             
             function showGifs() {
@@ -316,7 +352,7 @@
                         setTimeout(() => {
                              gifs[gifIndex - 1].classList.add('hidden');
                              gifs[gifIndex - 1].classList.remove('fade-out');
-                        }, 800);
+                        }, 600);
                     }
                     
                     const currentGif = gifs[gifIndex];
@@ -329,19 +365,20 @@
                         const randomTop = Math.random() * (payamRect.height * 0.7) + (payamRect.height * 0.15);
                         const randomLeft = Math.random() * (payamRect.width * 0.7) + (payamRect.width * 0.15);
                         
+                        currentGif.style.position = 'absolute';
                         currentGif.style.top = `${randomTop}px`;
                         currentGif.style.left = `${randomLeft}px`;
                     }
                     
                     gifIndex++;
-                    gifInterval = setTimeout(showGifs, 8000);
+                    gifInterval = setTimeout(showGifs, 6000);
                 } else {
                     if (gifs.length > 0) {
                         gifs[gifs.length - 1].classList.add('fade-out');
                         setTimeout(() => {
                             gifs[gifs.length - 1].classList.add('hidden');
                             gifs[gifs.length - 1].classList.remove('fade-out');
-                        }, 800);
+                        }, 600);
                     }
                     
                     buttonContainer.classList.remove('hidden');
